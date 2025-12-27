@@ -40,6 +40,13 @@ bot = None
 async def cmd_start(message: Message):
     """Handle /start command - Welcome message with buttons"""
     
+    # Get MINI_APP_URL from environment
+    mini_app_url = os.getenv("MINI_APP_URL", "https://logiccrafterdz.github.io/realpnl/")
+    
+    if not mini_app_url:
+        await message.answer("⚠️ Configuration error: MINI_APP_URL not set.")
+        return
+    
     welcome_text = """
 🔍 <b>Welcome to RealPNL</b>
 
@@ -61,7 +68,7 @@ Choose an action below:
         [
             InlineKeyboardButton(
                 text="📊 Upload CSV",
-                web_app=WebAppInfo(url=MINI_APP_URL)
+                web_app=WebAppInfo(url=mini_app_url)
             )
         ],
         [
@@ -85,11 +92,14 @@ Choose an action below:
 async def cmd_upload(message: Message):
     """Handle /upload command - Open Mini App"""
     
+    # Get MINI_APP_URL from environment
+    mini_app_url = os.getenv("MINI_APP_URL", "https://logiccrafterdz.github.io/realpnl/")
+    
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
                 text="📊 Open Trade Analyzer",
-                web_app=WebAppInfo(url=MINI_APP_URL)
+                web_app=WebAppInfo(url=mini_app_url)
             )
         ]
     ])
@@ -181,11 +191,14 @@ async def cmd_verify(message: Message):
 async def cmd_report(message: Message):
     """Handle /report command - Show report button if exists"""
     
+    # Get MINI_APP_URL from environment
+    mini_app_url = os.getenv("MINI_APP_URL", "https://logiccrafterdz.github.io/realpnl/")
+    
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
                 text="📊 Open Report",
-                web_app=WebAppInfo(url=MINI_APP_URL)
+                web_app=WebAppInfo(url=mini_app_url)
             )
         ]
     ])
