@@ -301,5 +301,43 @@ async def main():
     await dp.start_polling(bot)
 
 
+# ============ HEALTH CHECK SERVER (for Render) ============
+
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    """Simple HTTP handler for Render health checks"""
+    
+    def do_GET(self):
+        if self.path == "/health":
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"OK")
+        else:
+            self.send_response(404)
+            self.end_headers()
+    
+    def log_message(self, format, *args):
+        """Suppress HTTP logs to keep console clean"""
+        pass
+
+
+def run_health_server():
+    """Run HTTP server for health checks"""
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(("0.0.0.0", port), HealthCheckHandler)
+    print(f"✅ Health server running on port {port}")
+    server.serve_forever()
+
+
 if __name__ == "__main__":
+    # Start health check server in a separate daemon thread
+    health_thread = threading.Thread(target=run_health_server, daemon=True)
+    health_thread.start()
+    
+    # Start Telegram bot (main loop)
     asyncio.run(main())
+
